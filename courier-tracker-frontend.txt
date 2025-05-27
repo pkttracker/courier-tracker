@@ -1,0 +1,545 @@
+script.js.bak
+[Binary or non-text file content not included]
+
+
+combine_files.sh
+#!/bin/bash
+
+# Get the current directory name
+dir_name=$(basename "$PWD")
+
+# Output file named after the directory
+output_file="${dir_name}.txt"
+
+# Create or empty the output file
+> "$output_file"
+
+# Function to check if a file is text-based
+is_text_file() {
+    case "$1" in
+        *.py|*.txt|*.html|*.json|*.sh|*.md|*.css|*.js|*.csv|*.xml)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+# Recursively find all files, excluding the output file
+find . -type f ! -name "$output_file" | while read -r file; do
+    relative_path="${file#./}"
+    echo "$relative_path" >> "$output_file"
+
+    if is_text_file "$file"; then
+        cat "$file" >> "$output_file"
+    else
+        echo "[Binary or non-text file content not included]" >> "$output_file"
+    fi
+
+    echo -e "\n" >> "$output_file"
+done
+
+echo "✅ Created $output_file with contents of all text-based files and placeholders for binary files."
+
+
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courier Tracker</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="images/my_logo.png" alt="Company Logo" class="logo">
+            <h1>Courier Tracking Service</h1>
+        </div>
+        <img src="images/my_banner.jpg" alt="Tracking Service Banner" class="banner">
+    </header>
+
+    <main class="container">
+        <h2>Track Your Parcel</h2>
+        <div class="form-group">
+            <label for="consignmentNumber">Consignment Number:</label>
+            <input type="text" id="consignmentNumber" placeholder="Enter consignment number">
+        </div>
+        <button id="trackButton">Track</button>
+        <div id="trackingResult"></div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+upload.css
+/* Specific styles for the upload.html page */
+.upload-section {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px dashed #007bff;
+    border-radius: 8px;
+    background-color: #e6f2ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.upload-section label {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #0056b3;
+}
+
+.upload-section input[type="file"] {
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 8px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.upload-section button {
+    padding: 10px 20px;
+    background-color: #28a745; /* A different color for upload button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+.upload-section button:hover {
+    background-color: #218838;
+}
+
+#uploadStatus {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 80%;
+    text-align: center;
+}
+
+#uploadStatus p.info-message {
+    color: #28a745;
+}
+
+#uploadStatus p.error-message {
+    color: #dc3545;
+}
+
+.back-link {
+    margin-top: 30px;
+    font-size: 1.1em;
+}
+
+.back-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
+
+script.js
+document.getElementById('trackButton').addEventListener('click', async () => {
+    // Corrected ID to match the HTML input field
+    const consignmentNumber = document.getElementById('consignmentNumber').value.trim();
+    // Corrected ID to match the HTML div for results
+    const trackingResultsDiv = document.getElementById('trackingResult');
+
+    if (!consignmentNumber) {
+        trackingResultsDiv.innerHTML = '<p class="error-message">Please enter a consignment number.</p>';
+        return;
+    }
+
+    // IMPORTANT: This URL needs to be your Ubuntu laptop's PUBLIC IP address
+    // followed by :5000 (the port your backend is exposed on).
+    // Example: http://192.0.2.1:5000
+    // If you don't have a public IP or port forwarding yet, use localhost for local testing:
+    const backendBaseUrl = 'http://localhost:5000'; // <<-- Confirm this is correct for your setup
+
+    trackingResultsDiv.innerHTML = '<p class="info-message">Tracking parcel, please wait...</p>';
+
+    try {
+        const response = await fetch(`${backendBaseUrl}/track?consignment_number=${consignmentNumber}`);
+        const data = await response.json();
+
+        if (response.ok) {
+            // Data received successfully, display in table
+            const parcel = data;
+            const tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sr.No.</th>
+                            <th>Consignment Number</th>
+                            <th>Party Name</th>
+                            <th>Customer Name</th>
+                            <th>Pickup Location</th>
+                            <th>Destination</th>
+                            <th>Number Of Packets</th>
+                            <th>Status</th>
+                            <th>Pickup Date</th>
+                            <th>Delivery Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${parcel.SrNo}</td>
+                            <td>${parcel.ConsignmentNumber}</td>
+                            <td>${parcel.PartyName}</td>
+                            <td>${parcel.CustomerName}</td>
+                            <td>${parcel.PickupLocation}</td>
+                            <td>${parcel.Destination}</td>
+                            <td>${parcel.NumberOfPackets}</td>
+                            <td>${parcel.Status}</td>
+                            <td>${parcel.PickupDate}</td>
+                            <td>${parcel.DeliveryDate || 'N/A'}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+            trackingResultsDiv.innerHTML = tableHtml;
+        } else {
+            // Handle API errors (e.g., consignment not found)
+            trackingResultsDiv.innerHTML = `<p class="error-message">${data.error || data.message || 'An unknown error occurred.'}</p>`;
+        }
+    } catch (error) {
+        console.error('Error fetching tracking data:', error);
+        trackingResultsDiv.innerHTML = '<p class="error-message">Failed to connect to the tracking service. Please check your internet connection or try again later.</p>';
+    }
+});
+
+// Optional: Add a simple function to demonstrate creating a consignment (for testing)
+// This won't be exposed on the frontend directly but good for understanding POST requests
+async function createDummyConsignment() {
+    const newConsignmentData = {
+        "ConsignmentNumber": "NEW12345",
+        "PartyName": "New Client",
+        "CustomerName": "New Customer",
+        "PickupLocation": "Source City",
+        "Destination": "Target City",
+        "NumberOfPackets": 1,
+        "Status": "Booked",
+        "PickupDate": "2025-05-26",
+        "DeliveryDate": null
+    };
+
+    const backendBaseUrl = 'http://localhost:5000'; // <<-- Confirm this is correct for your setup
+
+    try {
+        const response = await fetch(`${backendBaseUrl}/consignment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newConsignmentData),
+        });
+        const data = await response.json();
+        console.log('Create Consignment Response:', data);
+    } catch (error) {
+        console.error('Error creating consignment:', error);
+    }
+}
+
+// You can call createDummyConsignment() in your browser's console for testing the POST endpoint
+// e.g., in Chrome DevTools (F12), go to Console tab and type: createDummyConsignment()
+
+
+upload.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcel Data Upload (Local Only)</title>
+    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="upload.css"> </head>
+<body>
+    <div class="container">
+        <h1>Upload New Parcel Data</h1>
+        <p>This page is for internal use only to upload Excel files with consignment data.</p>
+
+        <div class="upload-section">
+            <label for="excelFile">Select Excel File (.xlsx or .xls):</label>
+            <input type="file" id="excelFile" accept=".xlsx, .xls">
+            <button id="uploadButton">Upload Data</button>
+            <div id="uploadStatus"></div>
+        </div>
+
+        <p class="back-link"><a href="index.html">Back to Tracking Page</a></p>
+    </div>
+
+    <script src="upload.js"></script>
+</body>
+</html>
+
+
+upload.js
+document.getElementById('uploadButton').addEventListener('click', async () => {
+    const fileInput = document.getElementById('excelFile');
+    const uploadStatusDiv = document.getElementById('uploadStatus');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        uploadStatusDiv.innerHTML = '<p class="error-message">Please select an Excel file to upload.</p>';
+        return;
+    }
+
+    // IMPORTANT: This URL needs to be 'http://localhost:5000' for local testing
+    const backendBaseUrl = 'http://localhost:5000';
+
+    const formData = new FormData();
+    formData.append('file', file); // 'file' matches the 'file' in request.files in Flask
+
+    uploadStatusDiv.innerHTML = '<p class="info-message">Uploading file, please wait...</p>';
+
+    try {
+        const response = await fetch(`${backendBaseUrl}/upload-excel`, {
+            method: 'POST',
+            body: formData, // FormData handles setting Content-Type header automatically
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            let message = `<p class="info-message">Successfully processed data from "${file.name}".</p>`;
+            message += `<p class="info-message">Inserted: ${data.inserted_records} new records.</p>`;
+            message += `<p class="info-message">Updated: ${data.updated_records} existing records.</p>`;
+
+            if (data.errors_in_rows && data.errors_in_rows.length > 0) {
+                message += '<p class="error-message">Errors occurred in some rows:</p><ul>';
+                data.errors_in_rows.forEach(err => {
+                    message += `<li>${err}</li>`;
+                });
+                message += '</ul>';
+            }
+            uploadStatusDiv.innerHTML = message;
+        } else {
+            uploadStatusDiv.innerHTML = `<p class="error-message">Upload failed: ${data.error || 'Unknown error'}</p>`;
+        }
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        uploadStatusDiv.innerHTML = '<p class="error-message">Failed to connect to the backend for upload. Is the backend server running?</p>';
+    }
+});
+
+
+style.css
+/* Base Styles for all screen sizes */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5; /* Light gray background */
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header Styles */
+.main-header {
+    background-color: #2c3e50; /* Dark blue/gray */
+    color: #ffffff;
+    padding: 1rem 0; /* Responsive padding top/bottom */
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.logo-container {
+    display: flex; /* Use flexbox for logo and title */
+    align-items: center; /* Vertically align items */
+    justify-content: center; /* Center horizontally for larger screens */
+    padding: 0 1rem; /* Padding on sides for smaller screens */
+    flex-wrap: wrap; /* Allow items to wrap on very small screens */
+}
+
+.logo {
+    height: 4rem; /* Responsive height using rem units */
+    margin-right: 1.5rem; /* Space between logo and title */
+    object-fit: contain; /* Ensure logo scales down without cropping */
+    max-width: 100%; /* Ensure it doesn't overflow on small screens */
+}
+
+.main-header h1 {
+    margin: 0; /* Remove default margin */
+    font-size: 2.5rem; /* Responsive font size */
+    flex-shrink: 0; /* Prevent title from shrinking too much */
+}
+
+.banner {
+    width: 100%; /* Always full width */
+    height: 12rem; /* Fixed height for banner, adjust as needed */
+    object-fit: cover; /* Cover the area, cropping if aspect ratio doesn't match */
+    display: block; /* Remove extra space below image */
+    margin-top: 1rem; /* Space between header content and banner */
+}
+
+/* Container for main content */
+.container {
+    max-width: 900px; /* Max width for larger screens */
+    margin: 2rem auto; /* Center container with responsive margins */
+    padding: 2rem; /* Responsive padding inside */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="file"] {
+    width: calc(100% - 20px); /* Adjust for padding/border */
+    padding: 0.8rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Include padding in width calculation */
+    font-size: 1rem;
+}
+
+button {
+    background-color: #3498db; /* Blue button */
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: block; /* Make button full width on small screens */
+    width: 100%; /* Full width */
+    max-width: 200px; /* Limit width on larger screens */
+    margin: 1.5rem auto 0; /* Center button */
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+#trackingResult, #uploadStatus {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+    min-height: 50px; /* Ensure some height even when empty */
+}
+
+.info-message {
+    color: #27ae60; /* Green for success */
+    font-weight: bold;
+}
+
+.error-message {
+    color: #e74c3c; /* Red for errors */
+    font-weight: bold;
+}
+
+
+/* Media Queries for Responsiveness */
+
+/* For screens smaller than 768px (e.g., tablets in portrait, large phones) */
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem auto; /* Less margin on smaller screens */
+        padding: 1.5rem;
+    }
+
+    .main-header h1 {
+        font-size: 2rem; /* Slightly smaller title */
+    }
+
+    .banner {
+        height: 10rem; /* Slightly smaller banner height */
+    }
+
+    button {
+        padding: 0.7rem 1.2rem;
+        font-size: 1rem;
+        max-width: 180px; /* Adjust button max width */
+    }
+}
+
+/* For screens smaller than 480px (e.g., most mobile phones) */
+@media (max-width: 480px) {
+    .main-header {
+        padding: 0.8rem 0;
+    }
+
+    .logo-container {
+        flex-direction: column; /* Stack logo and title vertically */
+        text-align: center;
+    }
+
+    .logo {
+        margin-right: 0; /* Remove horizontal margin when stacked */
+        margin-bottom: 0.5rem; /* Add vertical margin */
+        height: 3.5rem; /* Smaller logo */
+    }
+
+    .main-header h1 {
+        font-size: 1.8rem; /* Even smaller title */
+    }
+
+    .banner {
+        height: 8rem; /* Smaller banner on phones */
+        margin-top: 0.5rem;
+    }
+
+    .container {
+        margin: 0.5rem; /* Very small margin on very small screens */
+        padding: 1rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    button {
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+        max-width: none; /* Button takes full width */
+    }
+}
+
+
+images/my_logo.png
+[Binary or non-text file content not included]
+
+
+images/my_banner.jpg
+[Binary or non-text file content not included]
+
+

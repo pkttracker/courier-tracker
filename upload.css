@@ -1,0 +1,73 @@
+/* Specific styles for the upload.html page */
+.upload-section {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px dashed #007bff;
+    border-radius: 8px;
+    background-color: #e6f2ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.upload-section label {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #0056b3;
+}
+
+.upload-section input[type="file"] {
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 8px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.upload-section button {
+    padding: 10px 20px;
+    background-color: #28a745; /* A different color for upload button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+.upload-section button:hover {
+    background-color: #218838;
+}
+
+#uploadStatus {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 80%;
+    text-align: center;
+}
+
+#uploadStatus p.info-message {
+    color: #28a745;
+}
+
+#uploadStatus p.error-message {
+    color: #dc3545;
+}
+
+.back-link {
+    margin-top: 30px;
+    font-size: 1.1em;
+}
+
+.back-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}

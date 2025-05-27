@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcel Data Upload (Local Only)</title>
+    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="upload.css"> </head>
+<body>
+    <div class="container">
+        <h1>Upload New Parcel Data</h1>
+        <p>This page is for internal use only to upload Excel files with consignment data.</p>
+
+        <div class="upload-section">
+            <label for="excelFile">Select Excel File (.xlsx or .xls):</label>
+            <input type="file" id="excelFile" accept=".xlsx, .xls">
+            <button id="uploadButton">Upload Data</button>
+            <div id="uploadStatus"></div>
+        </div>
+
+        <p class="back-link"><a href="index.html">Back to Tracking Page</a></p>
+    </div>
+
+    <script src="upload.js"></script>
+</body>
+</html>

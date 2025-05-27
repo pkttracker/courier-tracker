@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courier Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/my_logo.png" type="image/png"> </head>
+<body>
+
+    <header class="main-header">
+        <div class="banner">
+            <img src="images/my_logo.png" alt="Company Logo" class="logo"> <div class="banner-text">SKYKING ASSOCIATED EXPRESS</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h2>Track Your Parcel</h2>
+        <div class="form-group">
+            <label for="consignmentNumber">Consignment Number:</label>
+            <input type="text" id="consignmentNumber" placeholder="Enter consignment number">
+        </div>
+        <button id="trackButton">Track</button>
+        <p class="instruction-text">Check up to 5 Consignment Numbers, comma separated (e.g., CN123, CN456, CN789).</p>
+        <div id="trackingResult"></div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+document.getElementById('trackButton').addEventListener('click', async () => {
+    const consignmentNumber = document.getElementById('consignmentInput').value.trim();
+    const trackingResultsDiv = document.getElementById('trackingResults');
+
+    if (!consignmentNumber) {
+        trackingResultsDiv.innerHTML = '<p class="error-message">Please enter a consignment number.</p>';
+        return;
+    }
+
+    // IMPORTANT: This URL needs to be your Ubuntu laptop's PUBLIC IP address
+    // followed by :5000 (the port your backend is exposed on).
+    // Example: http://192.0.2.1:5000
+    // If you don't have a public IP or port forwarding yet, use localhost for local testing:
+    // const backendBaseUrl = 'http://localhost:5000';
+    const backendBaseUrl = 'http://YOUR_UBUNTU_LAPTOP_PUBLIC_IP:5000'; // <<-- REPLACE THIS!
+
+    trackingResultsDiv.innerHTML = '<p class="info-message">Tracking parcel, please wait...</p>';
+
+    try {
+        const response = await fetch(`${backendBaseUrl}/track?consignment_number=${consignmentNumber}`);
+        const data = await response.json();
+
+        if (response.ok) {
+            // Data received successfully, display in table
+            const parcel = data;
+            const tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sr.No.</th>
+                            <th>Consignment Number</th>
+                            <th>Party Name</th>
+                            <th>Customer Name</th>
+                            <th>Pickup Location</th>
+                            <th>Destination</th>
+                            <th>Number Of Packets</th>
+                            <th>Status</th>
+                            <th>Pickup Date</th>
+                            <th>Delivery Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${parcel.SrNo}</td>
+                            <td>${parcel.ConsignmentNumber}</td>
+                            <td>${parcel.PartyName}</td>
+                            <td>${parcel.CustomerName}</td>
+                            <td>${parcel.PickupLocation}</td>
+                            <td>${parcel.Destination}</td>
+                            <td>${parcel.NumberOfPackets}</td>
+                            <td>${parcel.Status}</td>
+                            <td>${parcel.PickupDate}</td>
+                            <td>${parcel.DeliveryDate || 'N/A'}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+            trackingResultsDiv.innerHTML = tableHtml;
+        } else {
+            // Handle API errors (e.g., consignment not found)
+            trackingResultsDiv.innerHTML = `<p class="error-message">${data.error || data.message || 'An unknown error occurred.'}</p>`;
+        }
+    } catch (error) {
+        console.error('Error fetching tracking data:', error);
+        trackingResultsDiv.innerHTML = '<p class="error-message">Failed to connect to the tracking service. Please check your internet connection or try again later.</p>';
+    }
+});
+
+// Optional: Add a simple function to demonstrate creating a consignment (for testing)
+// This won't be exposed on the frontend directly but good for understanding POST requests
+async function createDummyConsignment() {
+    const newConsignmentData = {
+        "ConsignmentNumber": "NEW12345",
+        "PartyName": "New Client",
+        "CustomerName": "New Customer",
+        "PickupLocation": "Source City",
+        "Destination": "Target City",
+        "NumberOfPackets": 1,
+        "Status": "Booked",
+        "PickupDate": "2025-05-26",
+        "DeliveryDate": null
+    };
+
+    const backendBaseUrl = 'http://YOUR_UBUNTU_LAPTOP_PUBLIC_IP:5000'; // <<-- REPLACE THIS!
+
+    try {
+        const response = await fetch(`${backendBaseUrl}/consignment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newConsignmentData),
+        });
+        const data = await response.json();
+        console.log('Create Consignment Response:', data);
+    } catch (error) {
+        console.error('Error creating consignment:', error);
+    }
+}
+
+// You can call createDummyConsignment() in your browser's console for testing the POST endpoint
+// e.g., in Chrome DevTools (F12), go to Console tab and type: createDummyConsignment()
