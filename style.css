@@ -20,7 +20,7 @@ body {
 /* Removed .logo-container rule as this div is no longer in the HTML header */
 
 .logo {
-    height: 4rem; /* Responsive height using rem units */
+    height: 4.5rem; /* MODIFIED: Increased logo size further (from 4.3rem to 4.5rem) */
     /* Removed: margin-right from here, gap on parent .banner will handle spacing */
     object-fit: contain; /* Ensure logo scales down without cropping */
     flex-shrink: 0; /* Prevent logo from shrinking */
@@ -53,7 +53,8 @@ body {
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Adds a shadow for readability */
     box-sizing: border-box;
-    max-width: calc(100% - 6rem); /* Max width for text to not overlap logo, approx (logo height + gap) */
+    /* MODIFIED: Adjusted max-width calculation for the new logo size (4.5rem logo + 20px gap (~1.25rem) = 5.75rem) */
+    max-width: calc(100% - 5.75rem); 
     flex-grow: 1; /* Allow text to grow and take available space */
 }
 
@@ -71,7 +72,7 @@ h2 {
     text-align: center;
     color: #2c3e50;
     margin-bottom: 1.5rem;
-    font-size: 2rem;
+    font-size: 1.8rem; /* Already decreased in previous step */
 }
 
 .form-group {
@@ -217,7 +218,7 @@ button:hover {
     /* .main-header h1 rule is no longer present */
 
     .logo {
-        height: 3.5rem; /* Slightly smaller logo */
+        height: 4.0rem; /* MODIFIED: Increased logo size for this breakpoint (from 3.8rem to 4.0rem) */
     }
     
     .banner {
@@ -228,6 +229,8 @@ button:hover {
 
     .banner-text {
         font-size: 2.8rem; /* Adjust font size for tablets */
+        /* MODIFIED: Adjusted max-width calculation for the new logo size at this breakpoint (4.0rem logo + 15px gap (~0.94rem) = 4.94rem) */
+        max-width: calc(100% - 4.94rem); 
     }
 
     button {
@@ -298,7 +301,7 @@ button:hover {
     .logo {
         margin-right: 0; /* Remove horizontal margin when stacked */
         margin-bottom: 0.5rem; /* Add vertical margin */
-        height: 3.5rem; /* Smaller logo */
+        height: 5.5rem; /* MODIFIED: Logo size at this breakpoint (from 3.8rem to 5.5rem) */
     }
 
     /* .main-header h1 rule is no longer present */
@@ -312,7 +315,7 @@ button:hover {
     }
 
     .banner-text {
-        font-size: 1.8rem; /* Adjust font size for mobile phones */
+        font-size: 1.5rem; /* Adjust font size for mobile phones */
         max-width: 90%; /* Allow text to occupy more width when stacked */
     }
 
@@ -322,7 +325,7 @@ button:hover {
     }
 
     h2 {
-        font-size: 1.8rem;
+        font-size: 1.6rem; /* Already decreased in previous step */
     }
 
     input[type="text"],
