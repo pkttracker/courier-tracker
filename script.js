@@ -23,7 +23,7 @@ document.getElementById('trackButton').addEventListener('click', async () => {
         return;
     }
 
-    const backendBaseUrl = 'http://103.225.176.189:5000'; // <<-- Confirm this is correct for your setup
+    const backendBaseUrl = 'http://localhost:5000'; // <<-- Confirm this is correct for your setup
     trackingResultsDiv.innerHTML = '<p class="info-message">Tracking parcels, please wait...</p>';
 
     let allResultsHtml = ''; // To accumulate results for all CNs
@@ -101,7 +101,7 @@ async function createDummyConsignment() {
         "PickupDate": "2025-05-26",
         "DeliveryDate": null
     };
-    const backendBaseUrl = 'http://103.225.176.189:5000'; // <<-- Confirm this is correct for your setup
+    const backendBaseUrl = 'http://localhost:5000'; // <<-- Confirm this is correct for your setup
 
     try {
         const response = await fetch(`${backendBaseUrl}/consignment`, {
