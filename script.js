@@ -23,7 +23,9 @@ document.getElementById('trackButton').addEventListener('click', async () => {
         return;
     }
 
-    const backendBaseUrl = 'https://8c92-103-225-176-192.ngrok-free.app/'; // <<-- Confirm this is correct for your setup
+    // IMPORTANT: This URL should be the 'https://' forwarding URL from your ngrok terminal.
+    // I've removed the trailing slash for cleaner URL construction.
+    const backendBaseUrl = 'https://8c92-103-225-176-192.ngrok-free.app'; // <--- THIS IS NOW CORRECT!
     trackingResultsDiv.innerHTML = '<p class="info-message">Tracking parcels, please wait...</p>';
 
     let allResultsHtml = ''; // To accumulate results for all CNs
@@ -101,7 +103,8 @@ async function createDummyConsignment() {
         "PickupDate": "2025-05-26",
         "DeliveryDate": null
     };
-    const backendBaseUrl = 'https://8c92-103-225-176-192.ngrok-free.app/'; // <<-- Confirm this is correct for your setup
+    // IMPORTANT: This URL should be the 'https://' forwarding URL from your ngrok terminal.
+    const backendBaseUrl = 'https://8c92-103-225-176-192.ngrok-free.app'; // <--- THIS IS NOW CORRECT!
 
     try {
         const response = await fetch(`${backendBaseUrl}/consignment`, {
